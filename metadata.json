@@ -1,0 +1,8 @@
+{
+  "name": "VoiceClone Alert",
+  "description": "AI-powered protection against voice cloning scams. Detects deepfakes in real-time and alerts your family.",
+  "requestFramePermissions": [
+    "microphone",
+    "notifications"
+  ]
+}

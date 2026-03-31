@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and protection settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "isProtected": { "type": "boolean" },
+        "language": { "type": "string", "enum": ["en", "hi", "ml"] },
+        "riskThreshold": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "phoneNumber", "role"]
+    },
+    "FamilyGuardian": {
+      "title": "Family Guardian",
+      "description": "Emergency contact for alerts",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "relation": { "type": "string" },
+        "isVerified": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phoneNumber"]
+    },
+    "CallLog": {
+      "title": "Call Log",
+      "description": "Record of analyzed calls",
+      "type": "object",
+      "properties": {
+        "callerNumber": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "riskScore": { "type": "number" },
+        "verdict": { "type": "string", "enum": ["Safe", "Fake"] },
+        "reasonFlags": { "type": "array", "items": { "type": "string" } },
+        "transcript": { "type": "string" },
+        "isReported": { "type": "boolean" }
+      },
+      "required": ["callerNumber", "timestamp", "riskScore", "verdict"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile"
+    },
+    "/users/{userId}/guardians/{guardianId}": {
+      "schema": "FamilyGuardian",
+      "description": "Family contacts for a user"
+    },
+    "/users/{userId}/calls/{callId}": {
+      "schema": "CallLog",
+      "description": "Call history for a user"
+    }
+  }
+}

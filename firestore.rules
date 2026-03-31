@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: /users/{userId}
+    // Fields: uid, phoneNumber, displayName, role, isProtected, language, riskThreshold, createdAt
+    //
+    // Collection: /users/{userId}/guardians/{guardianId}
+    // Fields: name, phoneNumber, relation, isVerified, createdAt
+    //
+    // Collection: /users/{userId}/calls/{callId}
+    // Fields: callerNumber, timestamp, riskScore, verdict, reasonFlags, transcript, isReported
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "m.amritharajesh@gmail.com" && request.auth.token.email_verified == true));
+    }
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() > 0 &&
+             data.phoneNumber is string && data.phoneNumber.size() >= 10 &&
+             data.role in ['user', 'admin'];
+    }
+    function isValidGuardian(data) {
+      return data.name is string && data.name.size() > 0 &&
+             data.phoneNumber is string && data.phoneNumber.size() >= 10;
+    }
+    function isValidCall(data) {
+      return data.callerNumber is string &&
+             data.riskScore is number && data.riskScore >= 0 && data.riskScore <= 100 &&
+             data.verdict in ['Safe', 'Fake'];
+    }
+
+    // ===============================================================
+    // Match Blocks
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) && 
+                    request.resource.data.role == resource.data.role; // Cannot change role
+    }
+
+    match /users/{userId}/guardians/{guardianId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidGuardian(request.resource.data);
+      allow update: if isOwner(userId) && isValidGuardian(request.resource.data);
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/calls/{callId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidCall(request.resource.data);
+      allow update: if isOwner(userId) && isValidCall(request.resource.data);
+      allow delete: if isOwner(userId);
+    }
+  }
+}
