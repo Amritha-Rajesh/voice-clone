@@ -111,8 +111,7 @@ Gemini's multilingual capability allows the app to analyze transcripts in Malaya
 ---
 
 ## Demo Video
-
-Upload your demo video to Google Drive and paste the shareable link here (max 3 minutes).
+https://drive.google.com/file/d/1QPSVAu9SMqgpkwb-doyUjQpQlA57vDPU/view?usp=sharing
 
 [Watch Demo](#)
 
