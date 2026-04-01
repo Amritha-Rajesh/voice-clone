@@ -101,15 +101,17 @@ Gemini's multilingual capability allows the app to analyze transcripts in Malaya
 ---
 
 ## Proof of Google AI Usage
-./proof/proof1.png
-./proof/proof2.png
+
+[](./proof/proof1.png)
+[](./proof/proof2.png)
+
 ---
 
 ## Screenshots
-./screenshot/sc1.png
-./screenshot/sc2.png
-./screenshot/sc3.png
-./screenshot/sc4.png
+[](./screenshot/sc1.png)
+[](./screenshot/sc2.png)
+[](./screenshot/sc3.png)
+[](./screenshot/sc4.png)
 
 
 ---
